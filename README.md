@@ -1,4 +1,4 @@
-#Course Planner (Java)
+Course Planner (Java)
 
 A simple console-based application that manages courses using CRUD operations.
 
