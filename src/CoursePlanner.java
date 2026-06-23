@@ -30,8 +30,14 @@ public class CoursePlanner {
         input.nextLine(); // clear buffer
 
         // check is data are valid
-        if (code.trim().isEmpty() || name.trim().isEmpty()) {
-            System.out.println("Error: course code and course name " +
+        if (code.trim().isEmpty()) {
+            System.out.println("Error: course code " +
+                    "cannot be empty.");
+            return;
+        }
+
+        if (name.trim().isEmpty()) {
+            System.out.println("Error: course name " +
                     "cannot be empty.");
             return;
         }
