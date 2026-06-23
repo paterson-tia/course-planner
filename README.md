@@ -1,2 +1,9 @@
-# course-planner
-Java console-based Course Planner with CRUD operations and menu system.
+#Course Planner (Java)
+
+A simple console-based application that manages courses using CRUD operations.
+
+Features:
+- Add course
+- View courses
+- Search course
+- Remove course
