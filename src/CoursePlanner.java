@@ -16,50 +16,98 @@ public class CoursePlanner {
         input = new Scanner(System.in);
     }
 
-    // coursePlanner's method to add courses
+    // --------------method to add courses
     public void addCourse() {
-        // prompt the user to enter data
-        System.out.print("Enter course code: ");
-        String code = input.nextLine();
 
-        System.out.print("Enter course name: ");
-        String name = input.nextLine();
+        // prompt the user to enter code
+        // and code validation
 
-        System.out.print("Enter course credit: ");
-        int credits = input.nextInt();
-        input.nextLine(); // clear buffer
+        String code;
 
-        // check is data are valid
-        if (code.trim().isEmpty()) {
-            System.out.println("Error: course code " +
-                    "cannot be empty.");
-            return;
+        while (true) {
+
+            System.out.print("Enter course code: ");
+            code = input.nextLine();
+
+            if (code.trim().isEmpty()) {
+                System.out.println("\nError: course code cannot be empty. Try again!");
+                continue;
+            }
+
+            // duplicate check
+            boolean duplicate = false;
+
+            for (Course course : courses) {
+                if (course.getCourseCode().equalsIgnoreCase(code)) {
+                    duplicate = true;
+                    break;
+                }
+            }
+
+            if (duplicate) {
+                System.out.println("\nError: course code already exists. Try again!");
+                continue;
+            }
+
+            break;
         }
 
-        if (name.trim().isEmpty()) {
-            System.out.println("Error: course name " +
-                    "cannot be empty.");
-            return;
+        // prompt the user to enter name
+        // and name validation
+
+        String name;
+
+        while (true) {
+
+            System.out.print("Enter course name: ");
+            name = input.nextLine();
+
+            // course code validation
+            if (!name.trim().isEmpty()) {
+                break;
+            }
+
+            System.out.println("\nError: course name cannot be empty. Try again!");
         }
 
-        if (credits <= 0) {
-            System.out.println("Error: credits must be greater than zero.");
-            return;
+        // prompt the user to enter credits
+        // and credits validation
+
+        int credits;
+
+        while (true) {
+            System.out.print("Enter course credit: ");
+            String creditStr = input.nextLine();
+
+            try {
+                credits = Integer.parseInt(creditStr);
+
+                if (credits > 0) {
+                    break;
+                }
+
+                System.out.println("\nError: credits must be greater than zero.");
+
+            } catch (NumberFormatException e) {
+                System.out.println("\nError: credits must be a number.");
+            }
         }
 
+        // create course
         Course course = new Course(code, name, credits);
 
+        // add course to courses
         courses.add(course);
 
         System.out.println("Course added successfully!");
     }
 
-    // coursePlanner's method to view courses
+    // ---------------method to view courses
 
     public void viewCourses() {
 
         if (courses.isEmpty()) {
-            System.out.println("No courses available.");
+            System.out.println("\nNo courses available.");
             return;
         }
 
@@ -69,12 +117,9 @@ public class CoursePlanner {
             System.out.println((i + 1) + ". " + courses.get(i));
         }
 
-        /*for (Course course : courses) {
-            System.out.println(course);
-            }*/
-        }
+    }
 
-    // coursePlanner's method to search courses
+    // ------------------------method to search courses
 
     public void searchCourse() {
         // prompt the user to enter code
@@ -84,37 +129,181 @@ public class CoursePlanner {
         // search course in courses ant print it out
         for (Course course : courses) {
             if (course.getCourseCode().equalsIgnoreCase(searchCode)) {
-                System.out.println("Course found:");
+                System.out.println("\nCourse found:");
                 System.out.println(course);
                 return;
             }
         }
 
-        System.out.println("Course not found.");
+        System.out.println("\nCourse not found.");
     }
 
-    // coursePlanner's method to remove courses
+    // ----------coursePlanner's method to remove courses
 
     public void removeCourse() {
 
-        System.out.print("Enter course code to search: ");
+        System.out.print("Enter course code to remove: ");
         String removeCode = input.nextLine();
 
         for (int i = 0; i < courses.size(); i++) {
 
             if (courses.get(i).getCourseCode().equalsIgnoreCase(removeCode)) {
                 courses.remove(i);
-                System.out.println("Course removed successfully!");
+                System.out.println("\nCourse removed successfully!");
                 return;
             }
         }
 
-        System.out.println("Course not found.");
+        System.out.println("\nCourse not found.");
     }
 
-    // method run()
+    // --------------method to update course (new in v2)
+    public void updateCourse() {
+
+        System.out.print("Enter course code to update: ");
+        String code = input.nextLine();
+
+        for (Course course : courses) {
+            if (course.getCourseCode().equalsIgnoreCase(code)) {
+
+                // show course
+                System.out.println("\nCurrent course:");
+                System.out.println(course);
+
+                // start update
+                int choice;
+
+                while (true) {
+
+                    System.out.println("\nWhat do you want to update?");
+
+                    System.out.println("1. Course Name");
+                    System.out.println("2. Course Credits");
+                    System.out.println("3. Both");
+
+                    System.out.print("Enter your choice: ");
+                    String choiceStr = input.nextLine();
+
+                    // validate user choice
+                    try {
+                        choice = Integer.parseInt(choiceStr);
+                        if (choice >= 1 && choice <= 3) {
+                            break;
+                        }
+
+                        System.out.println("\nError: choice must be between 1 and 3.");
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("\nError: please enter a number.");
+                    }
+                }
+
+                switch (choice) {
+                    case 1:
+                        String newName;
+
+                        while (true) {
+                            System.out.print("Enter course new Name: ");
+                            newName = input.nextLine();
+
+                            // Validate user input name
+                            if (!newName.trim().isEmpty()) {
+                                break;
+                            }
+
+                            System.out.println("\nError: course name cannot be empty. Try it again!");
+                        }
+
+                        course.setCourseName(newName);
+                        System.out.println("\nCourse name updated successfully!");
+                        break;
+
+                    case 2:
+                        int newCredits;
+
+                        while (true) {
+
+                            System.out.print("Enter course new credits: ");
+                            String userInput = input.nextLine();
+
+                            //int newCredits;
+
+                            try {
+                                newCredits = Integer.parseInt(userInput);
+
+                                if (newCredits > 0) {
+                                    break;
+                                }
+
+                                System.out.println("\nError: credits must be greater than zero.");
+
+                            } catch (NumberFormatException e) {
+                                System.out.println("\nError: credits must be a number.");
+                            }
+                        }
+
+                        course.setCredits(newCredits);
+                        System.out.println("\nCredits updated successfully!");
+                        break;
+
+                    case 3:
+                        String name;
+
+                        while (true) {
+                            System.out.print("Enter new course Name: ");
+                            name = input.nextLine();
+
+                            // Validate user input name
+                            if (!name.trim().isEmpty()) {
+                                break;
+                            }
+
+                            System.out.println("\nError: course name cannot be empty. Try it again!");
+                        }
+
+                        int credits;
+
+                        while (true) {
+
+                            System.out.print("Enter course new credits: ");
+                            String userInputStr = input.nextLine();
+
+                            //int newCredits;
+
+                            try {
+                                credits = Integer.parseInt(userInputStr);
+
+                                if (credits > 0) {
+                                    break;
+                                }
+
+                                System.out.println("\nError: credits must be greater than zero.");
+
+                            } catch (NumberFormatException e) {
+                                System.out.println("\nError: credits must be a number.");
+                            }
+                        }
+
+                        course.setCourseName(name);
+                        course.setCredits(credits);
+
+                        System.out.println("\nCourse updated successfully!");
+                        break;
+
+                    default:
+                        System.out.println("\nInvalid choice.");
+                }
+
+                return;
+            }
+        }
+
+        System.out.println("\nCourse not found.");
+    }
+
+    // -------------method run()
     public void run() {
-        int choice;
+        int choice = 0;
 
         do {
             // menu
@@ -122,13 +311,25 @@ public class CoursePlanner {
             System.out.println("1. Add Course");
             System.out.println("2. Show Courses");
             System.out.println("3. Search Course");
-            System.out.println("4. Remove Course");
-            System.out.println("5. Exit");
+            System.out.println("4. Update Course");
+            System.out.println("5. Remove Course");
+            System.out.println("6. Exit");
 
             // Prompt user to enter choice
             System.out.print("Enter your choice: ");
-            choice = input.nextInt();
-            input.nextLine();
+            String choiceStr = input.nextLine();
+
+            // validate user choice
+            try {
+                choice = Integer.parseInt(choiceStr);
+                if (choice < 1 || choice > 6) {
+                    System.out.println("\nError: choice must be between 1 and 6.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("\nError: please enter a number.");
+                continue;
+            }
 
             switch (choice) {
                 case 1:
@@ -141,14 +342,17 @@ public class CoursePlanner {
                     searchCourse();
                     break;
                 case 4:
-                    removeCourse();
+                    updateCourse();
                     break;
                 case 5:
+                    removeCourse();
+                    break;
+                case 6:
                     System.out.println("Goodbye!");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    System.out.println("\nInvalid choice. Please try again.");
             }
-        } while (choice != 5);
+        } while (choice != 6);
     }
 }

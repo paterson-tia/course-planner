@@ -3,8 +3,8 @@
 public class Course {
     // declare data
     private final String courseCode;
-    private final String courseName;
-    private final int credits;
+    private String courseName; // change occurred in v2
+    private int credits; // change occurred in v2
 
     // define parameterized constructor
     public Course (String courseCode, String courseName, int credits) {
@@ -24,6 +24,25 @@ public class Course {
 
     public int getCredits() {
         return credits;
+    }
+
+    // define setter/mutator methods (New in v2)
+    public void setCourseName(String newName) {
+        if (newName != null && !newName.trim().isEmpty()) {
+            this.courseName = newName;
+        }
+        else {
+            System.out.println("Warning: invalid course name rejected.");
+        }
+    }
+
+    public void setCredits(int newCredits) {
+        if (newCredits >= 0) {
+            this.credits = newCredits;
+        }
+        else {
+            System.out.println("Warning: invalid credits rejected.");
+        }
     }
 
     // define toString method
