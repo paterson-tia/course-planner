@@ -659,6 +659,8 @@ public class CoursePlanner {
 
         // if no duplicate, enroll
         selectedStudent.enrollCourse(selectedCourse);
+
+        // display confirmation
         System.out.println("\nStudent"
                 + selectedStudent.getName()
                 + " is now enrolled in "
@@ -666,5 +668,184 @@ public class CoursePlanner {
                 + " - "
                 + selectedCourse.getCourseName()
                 + ".");
+    }
+
+    // method to show enrolled courses
+    public void showEnrolledCourses() {
+
+        // ask for student ID
+        System.out.print("Enter student ID to view course: ");
+        String enrollId =  input.nextLine();
+
+        // find student
+        Student selectedStudent = null;
+
+        for (Student student : students) {
+
+            if (student.getStudentId().equalsIgnoreCase(enrollId)) {
+                selectedStudent = student;
+                break;
+            }
+        }
+
+        // if student not added yet
+        if (selectedStudent == null) {
+            System.out.println("Student not found.");
+            return;
+        }
+
+        // get student's enrolled courses
+        ArrayList<Course> studentEnrolledCourses = selectedStudent.getEnrolledCourses();
+
+        if (studentEnrolledCourses.isEmpty()) {
+             System.out.println("\nNo courses enrolled.");
+             return;
+        }
+
+        // format and display enrolled courses
+        System.out.println("\nCourses enrolled by " + selectedStudent.getName() + ":");
+
+        for (int i = 0; i < studentEnrolledCourses.size(); i++) {
+            System.out.println(i + 1 + ". " + studentEnrolledCourses.get(i));
+        }
+    }
+
+    // method for dropping course
+    public void dropCourse() {
+
+        // ask for student ID
+        System.out.print("Enter student ID: ");
+        String dropId =  input.nextLine();
+
+        // find student
+        Student selectedStudent = null;
+
+        for (Student student : students) {
+
+            if (student.getStudentId().equalsIgnoreCase(dropId)) {
+                selectedStudent = student;
+                break;
+            }
+        }
+
+        // if student not added yet
+        if (selectedStudent == null) {
+            System.out.println("Student not found.");
+            return;
+        }
+
+        // show student's enrolled courses
+        ArrayList<Course> studentEnrolledCourses = selectedStudent.getEnrolledCourses();
+
+        if (studentEnrolledCourses.isEmpty()) {
+            System.out.println("\nNo courses enrolled.");
+            return;
+        }
+
+        // format and display enrolled courses
+        System.out.println("\nCourses enrolled by " + selectedStudent.getName() + ":");
+
+        for (int i = 0; i < studentEnrolledCourses.size(); i++) {
+            System.out.println(i + 1 + ". " + studentEnrolledCourses.get(i));
+        }
+
+        // prompt user to enter course code to drop
+        Course dropCourse = null;
+
+        System.out.print("Enter course code to drop: ");
+        String dropCode = input.nextLine();
+
+        // find course
+        for (Course course : studentEnrolledCourses) {
+
+            if (course.getCourseCode().equalsIgnoreCase(dropCode)) {
+                dropCourse = course;
+                break;
+            }
+        }
+
+        // remove course
+        if (dropCourse != null) {
+            studentEnrolledCourses.remove(dropCourse);
+
+            System.out.println("\n"
+                    + selectedStudent.getName()
+                    + " dropped "
+                    + dropCourse.getCourseCode()
+                    + " - "
+                    + dropCourse.getCourseName()
+                    + " successfully!");
+        }
+        else {
+            // otherwise
+            System.out.println("\nStudent "
+                    + selectedStudent.getName()
+                    + " is not enrolled in this course.");
+        }
+    }
+
+    // method to show all students
+    public void showStudentsEnrolledInCourse() {
+
+        // ask for course code
+        System.out.print("Enter course code: ");
+        String code =  input.nextLine();
+
+        // find course
+        Course selectedCourse = null;
+
+        for (Course course : courses) {
+
+            if (course.getCourseCode().equalsIgnoreCase(code)) {
+                selectedCourse = course;
+                break;
+            }
+        }
+
+        // if course was not fund
+        if (selectedCourse == null) {
+            System.out.println("Course not found.");
+            return;
+        }
+        // otherwise
+        System.out.println("\nCourse selected:");
+        System.out.println(selectedCourse);
+
+
+        // loop through each student's enrolled courses
+        int countStudent = 0;
+
+        for (int i = 0; i < students.size(); i++) {
+            for (int j = 0; j < students.get(i).getEnrolledCourses().size(); j++) {
+                if (students.get(i).getEnrolledCourses().get(j).getCourseCode()
+                        .equalsIgnoreCase(selectedCourse.getCourseCode())) {
+
+                    if (countStudent == 0) {
+                        System.out.println("Students enrolled in "
+                                + selectedCourse.getCourseCode()
+                                + " - "
+                                + selectedCourse.getCourseName()
+                                + ":");
+                    }
+
+                    System.out.println((countStudent + 1)
+                            + ". "
+                            + students
+                            .get(i).getStudentId()
+                            + " - "
+                            + students.get(i).getName());
+
+                    countStudent++;
+                    break;
+                }
+            }
+        }
+
+        if (countStudent == 0) {
+            System.out.println("No students are enrolled in "
+                    + selectedCourse.getCourseCode()
+                    + " - "
+                    + selectedCourse.getCourseName());
+        }
     }
 }
