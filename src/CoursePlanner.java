@@ -17,7 +17,7 @@ public class CoursePlanner {
         students = new ArrayList<>();
         input = new Scanner(System.in);
     }
-/*=================================COURSE======================================*/
+/*=================================COURSE MANAGEMENT======================================*/
     // --------------method to add courses
     public void addCourse() {
 
@@ -106,23 +106,53 @@ public class CoursePlanner {
         System.out.println("\nCourse not found.");
     }
 
-    // ----------coursePlanner's method to remove courses
+    // ----------method to remove courses
 
     public void removeCourse() {
 
         System.out.print("Enter course code to remove: ");
         String removeCode = input.nextLine();
 
+        // check if the course exists before start remove process
         for (int i = 0; i < courses.size(); i++) {
 
             if (courses.get(i).getCourseCode().equalsIgnoreCase(removeCode)) {
-                courses.remove(i);
-                System.out.println("\nCourse removed successfully!");
-                return;
+                // check if there are any students enrolled in that course
+                // remove the course only if no students are enrolled in it
+                int studentCount = 0;
+
+                for (Student student : students) {
+                    for (Course course : student.getEnrolledCourses()) {
+                        if (course.getCourseCode().equalsIgnoreCase(removeCode)) {
+                            studentCount++;
+                            break;
+                        }
+                    }
+                }
+
+                if (studentCount == 0) {
+                    courses.remove(i);
+                    System.out.println("\n" + removeCode + " removed successfully!");
+                    return;
+                }
+                else {
+                    boolean oneStudent = studentCount == 1;
+                    String studentLabel = (oneStudent ? "student" : "students");
+                    String verb = (oneStudent ? "is" : "are");
+
+                    System.out.println("\nCannot remove " + removeCode + ".");
+                    System.out.println(studentCount
+                            + " "
+                            + studentLabel
+                            + " "
+                            + verb
+                            + " still enrolled.");
+                    return;
+                }
             }
         }
 
-        System.out.println("\nCourse not found.");
+        System.out.println("\nCourse " + removeCode + " not found.");
     }
 
     // --------------method to update course (new in v2)
@@ -220,13 +250,16 @@ public class CoursePlanner {
             System.out.println("8. Search Students");
             System.out.println("9. Delete Students");
             System.out.println("10. Enroll Student in Course");
-            System.out.println("11. Exit");
+            System.out.println("11. Show Student Enrolled Courses");
+            System.out.println("12. Drop Course");
+            System.out.println("13. Show Students Enrolled in Course");
+            System.out.println("14. Exit");
 
             choice = intRange(
                     "Enter your choice: ",
                     1,
-                    10,
-                    "Error: choice must be between 1 and 6. Try again!"
+                    14,
+                    "Error: choice must be between 1 and 14. Try again!"
             );
 
             switch (choice) {
@@ -261,11 +294,20 @@ public class CoursePlanner {
                     enrollStudentInCourse();
                     break;
                 case 11:
+                    showEnrolledCourses();
+                    break;
+                case 12:
+                    dropCourse();
+                    break;
+                case 13:
+                    showStudentsEnrolledInCourse();
+                    break;
+                case 14:
                     System.out.println("Goodbye!");
                     break;
             }
 
-        } while (choice != 11);
+        } while (choice != 14);
     }
 
     /* Courses helper Methods*/
@@ -332,7 +374,7 @@ public class CoursePlanner {
         return false;
      }
 
-    /*=============================STUDENT=================================*/
+    /*=============================STUDENT MANAGEMENT=================================*/
     //----------------addStudent method
     public void addStudent() {
 
@@ -591,8 +633,8 @@ public class CoursePlanner {
         return false;
     }
 
-/*======================================REGISTRATION=====================================*/
-    // method for enrolling student
+/*======================================ENROLLMENT=====================================*/
+    /*--------------------method for enrolling student-------------------*/
 
     private void enrollStudentInCourse() {
         // ask for student ID
@@ -661,7 +703,7 @@ public class CoursePlanner {
         selectedStudent.enrollCourse(selectedCourse);
 
         // display confirmation
-        System.out.println("\nStudent"
+        System.out.println("\nStudent "
                 + selectedStudent.getName()
                 + " is now enrolled in "
                 + selectedCourse.getCourseCode()
@@ -670,7 +712,7 @@ public class CoursePlanner {
                 + ".");
     }
 
-    // method to show enrolled courses
+    /*------------------method to show student's enrolled courses----------------------*/
     public void showEnrolledCourses() {
 
         // ask for student ID
@@ -710,7 +752,7 @@ public class CoursePlanner {
         }
     }
 
-    // method for dropping course
+    /*---------------method for dropping course------------------*/
     public void dropCourse() {
 
         // ask for student ID
@@ -784,7 +826,7 @@ public class CoursePlanner {
         }
     }
 
-    // method to show all students
+    /*------------------method to show student enrolled in a course-----------------*/
     public void showStudentsEnrolledInCourse() {
 
         // ask for course code
@@ -848,4 +890,7 @@ public class CoursePlanner {
                     + selectedCourse.getCourseName());
         }
     }
+
+    /*----------------------*/
+
 }
