@@ -24,7 +24,7 @@ public class Student {
     }
 
     public ArrayList<Course> getEnrolledCourses() {
-        return enrolledCourses;
+        return new ArrayList<>(enrolledCourses);
     }
 
     // create setters
@@ -41,7 +41,12 @@ public class Student {
         enrolledCourses.add(course);
     }
 
-    // toString method
+    // other methods
+
+    public void dropCourse(Course course) {
+        enrolledCourses.remove(course);
+    }
+
     @Override
     public String toString() {
         return studentId + " - " + name;

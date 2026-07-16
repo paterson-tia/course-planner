@@ -94,16 +94,15 @@ public class CoursePlanner {
         System.out.print("Enter course code to search: ");
         String searchCode = input.nextLine();
 
-        // search course in courses and print it out
-        for (Course course : courses) {
-            if (course.getCourseCode().equalsIgnoreCase(searchCode)) {
-                System.out.println("\nCourse found:");
-                System.out.println(course);
-                return;
-            }
+        Course course = findCourse(searchCode);
+
+        if (course == null) {
+            System.out.println("\nCourse not found.");
+            return;
         }
 
-        System.out.println("\nCourse not found.");
+        System.out.println("\nCourse found.");
+        System.out.println(course);
     }
 
     // ----------method to remove courses
@@ -140,7 +139,11 @@ public class CoursePlanner {
                     String studentLabel = (oneStudent ? "student" : "students");
                     String verb = (oneStudent ? "is" : "are");
 
-                    System.out.println("\nCannot remove " + removeCode + ".");
+                    System.out.println("\nCannot remove "
+                            + removeCode.toUpperCase()
+                            + "."
+                    );
+
                     System.out.println(studentCount
                             + " "
                             + studentLabel
@@ -152,85 +155,90 @@ public class CoursePlanner {
             }
         }
 
-        System.out.println("\nCourse " + removeCode + " not found.");
+        System.out.println("\nCourse "
+                + removeCode.toUpperCase()
+                + " not found."
+        );
     }
 
-    // --------------method to update course (new in v2)
+    // --------------method to update course
+
     public void updateCourse() {
 
         System.out.print("Enter course code to update: ");
         String code = input.nextLine();
 
-        for (Course course : courses) {
-            if (course.getCourseCode().equalsIgnoreCase(code)) {
+        Course course = findCourse(code);
 
-                // show course
-                System.out.println("\nCurrent course:");
-                System.out.println(course);
-
-                // start update
-
-                System.out.println("\nWhat do you want to update?");
-
-                System.out.println("1. Course Name");
-                System.out.println("2. Course Credits");
-                System.out.println("3. Both");
-
-                int choice = intRange("Enter your choice: ",
-                            1,
-                            3,
-                            "Error: choice must be between 1 and 3. Try again!"
-                );
-
-                switch (choice) {
-                    case 1:
-                        String newName = nonEmptyString(
-                                "Enter new course name: ",
-                                "\nError: course name cannot be empty. Try again!"
-                        );
-
-                        course.setCourseName(newName);
-
-                        System.out.println("\nCourse name updated successfully!");
-                        break;
-
-                    case 2:
-                        int newCredits = positiveInt(
-                                "Enter new course credits: ",
-                                "\nError: credits must be positive number. Try again!"
-                        );
-
-                        course.setCredits(newCredits);
-
-                        System.out.println("\nCredits updated successfully!");
-                        break;
-
-                    case 3:
-                        String name = nonEmptyString(
-                                "Enter new course name: ",
-                                "\nError: course name cannot be empty. Try again!"
-                        );
-
-                        int credits = positiveInt(
-                                "Enter new course credits: ",
-                                "\nError: credits must be positive number. Try again!"
-                        );
-
-                        course.setCourseName(name);
-                        course.setCredits(credits);
-
-                        System.out.println("\nCourse updated successfully!");
-                        break;
-
-                    default:
-                        System.out.println("\nInvalid choice.");
-                }
-
-                return;
-            }
+        if (course == null) {
+            System.out.println("\nCourse not found.");
+            return;
         }
 
-        System.out.println("\nCourse not found.");
+                // show course
+        System.out.println("\nCurrent course:");
+        System.out.println(course);
+
+        // start update
+
+        System.out.println("\nWhat do you want to update?");
+
+        System.out.println("1. Course Name");
+        System.out.println("2. Course Credits");
+        System.out.println("3. Both");
+
+        int choice = intRange("Enter your choice: ",
+                1,
+                3,
+                "Error: choice must be between 1 and 3. Try again!"
+        );
+
+        switch (choice) {
+            case 1:
+                String newName = nonEmptyString(
+                        "Enter new course name: ",
+                        "\nError: course name cannot be empty. Try again!"
+                );
+
+                course.setCourseName(newName);
+
+                System.out.println("\nCourse name updated successfully!");
+                break;
+
+            case 2:
+                int newCredits = positiveInt(
+                        "Enter new course credits: ",
+                        "\nError: credits must be positive number. Try again!"
+                );
+
+                course.setCredits(newCredits);
+
+                System.out.println("\nCredits updated successfully!");
+                break;
+
+            case 3:
+                String name = nonEmptyString(
+                        "Enter new course name: ",
+                        "\nError: course name cannot be empty. Try again!"
+                );
+
+                int credits = positiveInt(
+                        "Enter new course credits: ",
+                        "\nError: credits must be positive number. Try again!"
+                );
+
+                course.setCourseName(name);
+                course.setCredits(credits);
+
+                System.out.println("\nCourse updated successfully!");
+                break;
+
+            default:
+                System.out.println("\nInvalid choice.");
+        }
+
+        System.out.println("\nUpdated course:");
+        System.out.println(course);
     }
 
     // -------------method run()
@@ -239,27 +247,42 @@ public class CoursePlanner {
 
         do {
             // menu
-            System.out.println("\nCourse Planner Menu");
+            System.out.println("\nCourse Planner Menu\n");
+
+            System.out.println("--- Course Management ---\n");
+
             System.out.println("1. Add Course");
             System.out.println("2. Show Courses");
             System.out.println("3. Search Course");
             System.out.println("4. Update Course");
-            System.out.println("5. Remove Course");
+            System.out.println("5. Remove Course\n");
+
+            System.out.println("--- Student Management ---\n");
+
             System.out.println("6. Add Student");
             System.out.println("7. Show Students");
             System.out.println("8. Search Students");
-            System.out.println("9. Delete Students");
-            System.out.println("10. Enroll Student in Course");
-            System.out.println("11. Show Student Enrolled Courses");
-            System.out.println("12. Drop Course");
-            System.out.println("13. Show Students Enrolled in Course");
-            System.out.println("14. Exit");
+            System.out.println("9. Update Student");
+            System.out.println("10. Delete Student\n");
+
+            System.out.println("--- Enrollment Management ---\n");
+
+            System.out.println("11. Enroll Student in Course");
+            System.out.println("12. Show Student Enrolled Courses");
+            System.out.println("13. Drop Course");
+            System.out.println("14. Show Students Enrolled in Course\n");
+
+            System.out.println("--- Reports ---\n");
+
+            System.out.println("15. Reports");
+
+            System.out.println("\n16. Exit");
 
             choice = intRange(
                     "Enter your choice: ",
                     1,
-                    14,
-                    "Error: choice must be between 1 and 14. Try again!"
+                    16,
+                    "Error: choice must be between 1 and 16. Try again!"
             );
 
             switch (choice) {
@@ -288,26 +311,36 @@ public class CoursePlanner {
                     searchStudent();
                     break;
                 case 9:
-                    removeStudent();
+                    updateStudent();
                     break;
                 case 10:
-                    enrollStudentInCourse();
+                    removeStudent();
                     break;
                 case 11:
-                    showEnrolledCourses();
+                    enrollStudentInCourse();
                     break;
                 case 12:
-                    dropCourse();
+                    showEnrolledCourses();
                     break;
                 case 13:
-                    showStudentsEnrolledInCourse();
+                    dropCourse();
                     break;
                 case 14:
+                    showStudentsEnrolledInCourse();
+                    break;
+
+                case 15:
+                    reports();
+                    break;
+
+                case 16:
                     System.out.println("Goodbye!");
                     break;
+
+
             }
 
-        } while (choice != 14);
+        } while (choice != 16);
     }
 
     /* Courses helper Methods*/
@@ -482,16 +515,16 @@ public class CoursePlanner {
 
         System.out.print("Enter student ID to search: ");
         String searchId = input.nextLine();
-        // search student in students and print it out
-        for (Student student : students) {
-            if (student.getStudentId().equalsIgnoreCase(searchId)) {
-                System.out.println("\nStudent found.");
-                System.out.println(student);
-                return;
-            }
+
+        Student student = findStudent(searchId);
+
+        if (student == null) {
+            System.out.println("\nStudent not found.");
+            return;
         }
 
-        System.out.println("\nStudent not found.");
+        System.out.println("\nStudent found.");
+        System.out.println(student);
     }
 
     //------------removeStudent
@@ -500,16 +533,18 @@ public class CoursePlanner {
         System.out.print("Enter studentId to remove: ");
         String removeId = input.nextLine();
 
-        for (int i = 0; i < students.size(); i++) {
+        Student student = findStudent(removeId);
 
-            if(students.get(i).getStudentId().equalsIgnoreCase(removeId)) {
-                students.remove(i);
-                System.out.println("\nStudent removed successfully!");
-                return;
-            }
+        if (student == null) {
+            System.out.println("\nStudent not found.");
+            return;
         }
 
-        System.out.println("\nStudent not found.");
+        students.remove(student);
+        System.out.println("\nStudent "
+                +  student.getName()
+                + " removed successfully!"
+        );
     }
 
     //-------- method for updating student
@@ -518,110 +553,107 @@ public class CoursePlanner {
         System.out.print("Enter the student ID to update: ");
         String updateId = input.nextLine();
 
-        for (Student student : students) {
-            if (student.getStudentId().equalsIgnoreCase(updateId)) {
+        Student student = findStudent(updateId);
 
-                // print student
-                System.out.println("\nCurrent student:");
-                System.out.println(student);
-
-                // what data to update
-                System.out.println("\nWhat do you want to update?");
-
-                int choice;
-
-                if (student instanceof UndergraduateStudent) {
-
-                    // cast student into undergraduate student
-                    UndergraduateStudent ugStudent =
-                            (UndergraduateStudent) student;
-
-                    // undergraduate student menu
-                    System.out.println("1. Major");
-                    System.out.println("2. Classification");
-
-                    choice = intRange("Enter your choice: ",
-                            1,
-                            2,
-                            "\nError: choice must be between 1 and 2. Try again!");
-
-                    switch (choice) {
-
-                        case 1:
-                            String newMajor = nonEmptyString(
-                                    "Enter new major: ",
-                                    "Error: major cannot be empty. Try again!"
-                            );
-
-                            ugStudent.setMajor(newMajor);
-                            break;
-
-                        case 2:
-                            int classificationChoice = intRange(
-                                    "Select classification: \n1. Freshman \n2. Sophomore \n3. Junior \n4. Senior \nEnter choice: ",
-                                    1,
-                                    4,
-                                    "\nError: classification must be between 1 and 4. Try again!"
-                            );
-
-                            String newClassification = switch (classificationChoice) {
-                                case 1 -> "Freshman";
-                                case 2 -> "Sophomore";
-                                case 3 -> "Junior";
-                                case 4 -> "Senior";
-                                default -> "";
-                            };
-
-                            ugStudent.setClassification(newClassification);
-                            break;
-                    }
-                }
-                else if (student instanceof GraduateStudent) {
-                    // cast student into graduate student
-                    GraduateStudent gradStudent = (GraduateStudent) student;
-
-                    // menu
-                    System.out.println("1. Research area");
-                    System.out.println("2. Advisor name");
-
-                    choice = intRange("Enter your choice: ",
-                            1,
-                            2,
-                            "\nError: choice must be between 1 and 2. Try again!");
-
-
-                    switch (choice) {
-
-                        case 1:
-                            String newResearchArea = nonEmptyString(
-                                    "Enter new research area: ",
-                                    "Error: research area cannot be empty. Try again!"
-                            );
-
-                            gradStudent.setResearchArea(newResearchArea);
-                            break;
-
-                        case 2:
-                            String newAdvisorName = nonEmptyString(
-                                    "Enter new Advisor name: ",
-                                    "Error: advisor name cannot be empty. Try it again!");
-
-                            gradStudent.setAdvisorName(newAdvisorName);
-                            break;
-                    }
-                }
-
-                // display the updated student
-                System.out.println("\nUpdated student:");
-                System.out.println(student);
-                return;
-            }
+        if (student == null) {
+            System.out.println("\nStudent not found.");
         }
 
-        System.out.println("Student not found.");
+            // print student
+            System.out.println("\nCurrent student:");
+            System.out.println(student);
+
+            // what data to update
+            System.out.println("\nWhat do you want to update?");
+
+            int choice;
+
+            if (student instanceof UndergraduateStudent) {
+
+                // cast student into undergraduate student
+                UndergraduateStudent ugStudent =
+                        (UndergraduateStudent) student;
+
+                // undergraduate student menu
+                System.out.println("1. Major");
+                System.out.println("2. Classification");
+
+                choice = intRange("Enter your choice: ",
+                        1,
+                        2,
+                        "\nError: choice must be between 1 and 2. Try again!");
+
+                switch (choice) {
+
+                    case 1:
+                        String newMajor = nonEmptyString(
+                                "Enter new major: ",
+                                "Error: major cannot be empty. Try again!"
+                        );
+
+                        ugStudent.setMajor(newMajor);
+                        break;
+
+                    case 2:
+                        int classificationChoice = intRange(
+                                "Select classification: \n1. Freshman \n2. Sophomore \n3. Junior \n4. Senior \nEnter choice: ",
+                                1,
+                                4,
+                                "\nError: classification must be between 1 and 4. Try again!"
+                        );
+
+                        String newClassification = switch (classificationChoice) {
+                            case 1 -> "Freshman";
+                            case 2 -> "Sophomore";
+                            case 3 -> "Junior";
+                            case 4 -> "Senior";
+                            default -> "";
+                        };
+
+                        ugStudent.setClassification(newClassification);
+                        break;
+                }
+            }
+            else if (student instanceof GraduateStudent) {
+                // cast student into graduate student
+                GraduateStudent gradStudent = (GraduateStudent) student;
+
+                // menu
+                System.out.println("1. Research area");
+                System.out.println("2. Advisor name");
+
+                choice = intRange("Enter your choice: ",
+                        1,
+                        2,
+                        "\nError: choice must be between 1 and 2. Try again!");
+
+
+                switch (choice) {
+
+                    case 1:
+                        String newResearchArea = nonEmptyString(
+                                "Enter new research area: ",
+                                "Error: research area cannot be empty. Try again!"
+                        );
+
+                        gradStudent.setResearchArea(newResearchArea);
+                        break;
+
+                    case 2:
+                        String newAdvisorName = nonEmptyString(
+                                "Enter new Advisor name: ",
+                                "Error: advisor name cannot be empty. Try it again!");
+
+                        gradStudent.setAdvisorName(newAdvisorName);
+                        break;
+                }
+            }
+
+            System.out.println("\nUpdated student:");
+            System.out.println(student);
     }
 
-    /*-----Student helper methods*/
+    /*-----Student management helper methods*/
 
     private boolean studentExists(String studentId) {
 
@@ -642,17 +674,9 @@ public class CoursePlanner {
         String enrollId =  input.nextLine();
 
         // find student
-        Student selectedStudent = null;
+        Student selectedStudent = findStudent(enrollId);
 
-        for (Student student : students) {
-
-            if (student.getStudentId().equalsIgnoreCase(enrollId)) {
-                selectedStudent = student;
-                break;
-            }
-        }
-
-        // if student not added yet
+        // if student not exists
         if (selectedStudent == null) {
             System.out.println("Student not found.");
             return;
@@ -662,18 +686,12 @@ public class CoursePlanner {
         Course selectedCourse = null;
 
         while(true) {
+
             // ask for course code
             System.out.print("Enter course code to register for: ");
             String enrollCode = input.nextLine();
 
-            // find course
-            for (Course course : courses) {
-
-                if (course.getCourseCode().equalsIgnoreCase(enrollCode)) {
-                    selectedCourse = course;
-                    break;
-                }
-            }
+            selectedCourse = findCourse(enrollCode);
 
             // if the course not in courses
             if (selectedCourse != null) {
@@ -703,9 +721,8 @@ public class CoursePlanner {
         selectedStudent.enrollCourse(selectedCourse);
 
         // display confirmation
-        System.out.println("\nStudent "
-                + selectedStudent.getName()
-                + " is now enrolled in "
+        System.out.println(selectedStudent.getName()
+                + " has been enrolled in "
                 + selectedCourse.getCourseCode()
                 + " - "
                 + selectedCourse.getCourseName()
@@ -720,17 +737,9 @@ public class CoursePlanner {
         String enrollId =  input.nextLine();
 
         // find student
-        Student selectedStudent = null;
+        Student selectedStudent = findStudent(enrollId);
 
-        for (Student student : students) {
-
-            if (student.getStudentId().equalsIgnoreCase(enrollId)) {
-                selectedStudent = student;
-                break;
-            }
-        }
-
-        // if student not added yet
+        // if student not exists
         if (selectedStudent == null) {
             System.out.println("Student not found.");
             return;
@@ -740,7 +749,7 @@ public class CoursePlanner {
         ArrayList<Course> studentEnrolledCourses = selectedStudent.getEnrolledCourses();
 
         if (studentEnrolledCourses.isEmpty()) {
-             System.out.println("\nNo courses enrolled.");
+             System.out.println("\nThis student is not enrolled in any courses.");
              return;
         }
 
@@ -760,15 +769,7 @@ public class CoursePlanner {
         String dropId =  input.nextLine();
 
         // find student
-        Student selectedStudent = null;
-
-        for (Student student : students) {
-
-            if (student.getStudentId().equalsIgnoreCase(dropId)) {
-                selectedStudent = student;
-                break;
-            }
-        }
+        Student selectedStudent = findStudent(dropId);
 
         // if student not added yet
         if (selectedStudent == null) {
@@ -808,7 +809,8 @@ public class CoursePlanner {
 
         // remove course
         if (dropCourse != null) {
-            studentEnrolledCourses.remove(dropCourse);
+            //studentEnrolledCourses.remove(dropCourse);
+            selectedStudent.dropCourse(dropCourse);
 
             System.out.println("\n"
                     + selectedStudent.getName()
@@ -833,16 +835,7 @@ public class CoursePlanner {
         System.out.print("Enter course code: ");
         String code =  input.nextLine();
 
-        // find course
-        Course selectedCourse = null;
-
-        for (Course course : courses) {
-
-            if (course.getCourseCode().equalsIgnoreCase(code)) {
-                selectedCourse = course;
-                break;
-            }
-        }
+        Course selectedCourse = findCourse(code);
 
         // if course was not fund
         if (selectedCourse == null) {
@@ -872,8 +865,7 @@ public class CoursePlanner {
 
                     System.out.println((countStudent + 1)
                             + ". "
-                            + students
-                            .get(i).getStudentId()
+                            + students.get(i).getStudentId()
                             + " - "
                             + students.get(i).getName());
 
@@ -891,6 +883,263 @@ public class CoursePlanner {
         }
     }
 
-    /*----------------------*/
+    /*-----search helper methods------*/
 
+    private Student findStudent(String id) {
+
+        for (Student student : students) {
+            if (student.getStudentId().equalsIgnoreCase(id)) {
+                return student;
+            }
+        }
+
+        return null;
+    }
+
+    private Course findCourse(String code) {
+
+        for (Course course : courses) {
+            if (course.getCourseCode().equalsIgnoreCase(code)) {
+                return course;
+            }
+        }
+
+        return null;
+    }
+
+
+    /*======================================REPORTS=====================================*/
+
+    /*------Reports menu------*/
+
+    private void reports() {
+
+        int choice;
+
+        do {
+            System.out.println("--- Reports Menu ---");
+            System.out.println("1. Total number of students");
+            System.out.println("2. Total number of courses");
+            System.out.println("3. Undergraduate / Graduate count");
+            System.out.println("4. Student with most enrolled course");
+            System.out.println("5. Most popular course");
+            System.out.println("6. Average courses per student");
+            System.out.println("7. Back\n");
+
+            choice = intRange("Enter your choice: ",
+                    1,
+                    7,
+                    "Error: choice must be between 1 and 7. Try again!");
+
+            switch (choice) {
+
+                case 1:
+                    totalStudentsReport();
+                    break;
+
+                case 2:
+                    totalCoursesReport();
+                    break;
+
+                case 3:
+                    studentTypeReport();
+                    break;
+
+                case 4:
+                    studentWithMostCoursesReport();
+                    break;
+
+                case 5:
+                    mostPopularCourseReport();
+                    break;
+
+                case 6:
+                    averageCoursesReport ();
+                    break;
+
+                case 7:
+                    System.out.println("Returning to main menu....");
+                    break;
+            }
+
+        } while (choice != 7);
+    }
+
+    /*----- Reports external private methods ---------*/
+
+    private void totalStudentsReport() {
+        // print report
+        System.out.println("\n--- Total Students Report ---");
+        System.out.println("Total number of students: " + students.size());
+        System.out.println();
+    }
+
+    private void totalCoursesReport() {
+        // print report
+        System.out.println("\n--- Total Courses Report ---");
+        System.out.println("Total number of courses: " + courses.size());
+        System.out.println();
+    }
+
+    private void studentTypeReport() {
+
+        int undergraduateCount = 0;
+        int graduateCount = 0;
+
+        for (Student student : students) {
+
+            if (student instanceof UndergraduateStudent) {
+                undergraduateCount++;
+            }
+            else if (student instanceof GraduateStudent) {
+                graduateCount++;
+            }
+        }
+        // print report
+        System.out.println("\n--- Student Type Report ---");
+        System.out.println("Total number of undergraduate students: " + undergraduateCount);
+        System.out.println("Total number of graduate students: " + graduateCount);
+        System.out.println();
+    }
+
+    private void averageCoursesReport () {
+
+        if (students.isEmpty()) {
+            System.out.println("\nNo students available.");
+            return;
+        }
+
+        int enrolledCoursesCount = 0;
+
+        // compute the total number of enrolled courses
+        for (Student student : students) {
+            enrolledCoursesCount += student.getEnrolledCourses().size();
+        }
+        // compute and display average courses
+        double averageCourses = (double) enrolledCoursesCount / students.size();
+
+        System.out.println("\n--- Average Courses Report ---");
+        System.out.printf("Average courses per student: %.2f%n", averageCourses);
+        System.out.println();
+    }
+
+
+    private void studentWithMostCoursesReport() {
+        // check empty list
+        if (students.isEmpty()) {
+            System.out.println("\nNo students available.");
+            return;
+        }
+        // initialize with the first student
+        int maxEnrolledCourses = students.get(0).getEnrolledCourses().size();
+
+        // first pass
+        for (Student student : students) {
+            // get number of course for each student
+            int numberOfCourses = student.getEnrolledCourses().size();
+            // compare to the current max number of courses
+            if (numberOfCourses > maxEnrolledCourses) {
+                maxEnrolledCourses = numberOfCourses;
+            }
+        }
+
+        // second pass
+        int studentsWithMostCoursesCount =0;
+
+        for (int i = 0; i < students.size(); i++) {
+
+            int numberOfCourses = students.get(i).getEnrolledCourses().size();
+
+            if (numberOfCourses == maxEnrolledCourses) {
+
+                // print each student with maxEnrolledCourses courses
+                studentsWithMostCoursesCount++;
+
+                if (studentsWithMostCoursesCount == 1) {
+                    System.out.println("\n--- Students With Most Enrolled Courses Report ---");
+                }
+
+                System.out.println(studentsWithMostCoursesCount
+                        + ". "
+                        + students.get(i).getStudentId()
+                        + " - "
+                        + students.get(i).getName()
+                );
+            }
+        }
+
+        System.out.println("Maximum courses enrolled: " + maxEnrolledCourses);
+        System.out.println();
+    }
+
+    private void mostPopularCourseReport() {
+        // check empty list
+        if (courses.isEmpty()) {
+            System.out.println("\nNo courses available.");
+            return;
+        }
+
+        Course mostPopularCourse = courses.get(0);
+        int maxStudents = 0;
+
+        // first pass
+        for (Course course : courses) {
+
+            int enrollmentCount = countStudentsEnrolled(course);
+
+            if (enrollmentCount > maxStudents) {
+                maxStudents = enrollmentCount;
+            }
+        }
+
+        // second pass
+        int courseCount = 0;
+
+        for (Course course : courses) {
+
+            int enrollmentCount = countStudentsEnrolled(course);
+
+            if (enrollmentCount == maxStudents) {
+
+                courseCount++;
+
+                if (courseCount == 1) {
+                    System.out.println("\n--- Most Popular Courses Report ---");
+                    System.out.println("Maximum enrollment: "
+                            + maxStudents
+                            + " student"
+                            + (maxStudents == 1 ? "" : "s"));
+                    System.out.println();
+                }
+
+                // print each course with maxStudent enrollments
+                System.out.println(courseCount
+                        + ". "
+                        + course.getCourseCode()
+                        + " - "
+                        + course.getCourseName()
+                );
+            }
+        }
+
+        System.out.println();
+    }
+
+    /*------Enrollment count helper------*/
+
+    private int countStudentsEnrolled(final Course course) {
+
+        int enrollmentCount = 0;
+
+        for (Student student : students) {
+            for (Course enrolledCourse : student.getEnrolledCourses()) {
+                if (enrolledCourse.getCourseCode().equalsIgnoreCase(course.getCourseCode())) {
+                    enrollmentCount++;
+                    break;
+                }
+            }
+        }
+
+        return enrollmentCount;
+    }
 }
