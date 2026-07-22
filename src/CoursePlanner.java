@@ -20,9 +20,7 @@ public class CoursePlanner {
 /*=================================COURSE MANAGEMENT======================================*/
     // --------------method to add courses
     public void addCourse() {
-
-        // prompt the user to enter code
-        // and code validation
+        // get code and validate it
 
         String code;
 
@@ -33,6 +31,8 @@ public class CoursePlanner {
                     "\nError: course code cannot be empty. Try again"
             );
 
+            code = code.trim().toUpperCase();
+
             // duplicate check
             if (!courseExists(code)) {
                 break;
@@ -41,8 +41,7 @@ public class CoursePlanner {
             System.out.println("\nError: course code already exists. Try again!");
         }
 
-        // prompt the user to enter name
-        // and name validation
+        // get name and validate it
 
         String name;
 
@@ -51,8 +50,7 @@ public class CoursePlanner {
                 "\nError: course name cannot be empty. Try again!"
         );
 
-        // prompt the user to enter credits
-        // and credits validation
+        // get credits and validate it
 
         int credits;
 
@@ -62,6 +60,7 @@ public class CoursePlanner {
         );
 
         // create course
+        //code = toUpperCase(code);
         Course course = new Course(code, name, credits);
 
         // add course to courses
@@ -72,14 +71,14 @@ public class CoursePlanner {
 
     // ---------------method to view courses
 
-    public void viewCourses() {
+    public void showCourses() {
 
         if (courses.isEmpty()) {
             System.out.println("\nNo courses available.");
             return;
         }
 
-        System.out.println("\n----- Course List -----");
+        printSection("COURSE LIST");
 
         for (int i = 0; i < courses.size(); i++) {
             System.out.println((i + 1) + ". " + courses.get(i));
@@ -90,19 +89,17 @@ public class CoursePlanner {
     // ------------------------method to search courses
 
     public void searchCourse() {
-        // prompt the user to enter code
-        System.out.print("Enter course code to search: ");
-        String searchCode = input.nextLine();
 
-        Course course = findCourse(searchCode);
+        // get code and find course
+        Course searchCourse = promptForCourse();
 
-        if (course == null) {
+        if (searchCourse == null) {
             System.out.println("\nCourse not found.");
             return;
         }
 
-        System.out.println("\nCourse found.");
-        System.out.println(course);
+        printSection("COURSE FOUND:");
+        System.out.println(searchCourse);
     }
 
     // ----------method to remove courses
@@ -165,22 +162,19 @@ public class CoursePlanner {
 
     public void updateCourse() {
 
-        System.out.print("Enter course code to update: ");
-        String code = input.nextLine();
-
-        Course course = findCourse(code);
+        // get code and find course
+        Course course = promptForCourse();
 
         if (course == null) {
             System.out.println("\nCourse not found.");
             return;
         }
 
-                // show course
-        System.out.println("\nCurrent course:");
+        // show course
+        printSection("Current course:");
         System.out.println(course);
 
         // start update
-
         System.out.println("\nWhat do you want to update?");
 
         System.out.println("1. Course Name");
@@ -237,7 +231,7 @@ public class CoursePlanner {
                 System.out.println("\nInvalid choice.");
         }
 
-        System.out.println("\nUpdated course:");
+        printSection("UPDATED COURSE: ");
         System.out.println(course);
     }
 
@@ -246,37 +240,8 @@ public class CoursePlanner {
         int choice;
 
         do {
-            // menu
-            System.out.println("\nCourse Planner Menu\n");
-
-            System.out.println("--- Course Management ---\n");
-
-            System.out.println("1. Add Course");
-            System.out.println("2. Show Courses");
-            System.out.println("3. Search Course");
-            System.out.println("4. Update Course");
-            System.out.println("5. Remove Course\n");
-
-            System.out.println("--- Student Management ---\n");
-
-            System.out.println("6. Add Student");
-            System.out.println("7. Show Students");
-            System.out.println("8. Search Students");
-            System.out.println("9. Update Student");
-            System.out.println("10. Delete Student\n");
-
-            System.out.println("--- Enrollment Management ---\n");
-
-            System.out.println("11. Enroll Student in Course");
-            System.out.println("12. Show Student Enrolled Courses");
-            System.out.println("13. Drop Course");
-            System.out.println("14. Show Students Enrolled in Course\n");
-
-            System.out.println("--- Reports ---\n");
-
-            System.out.println("15. Reports");
-
-            System.out.println("\n16. Exit");
+            // main menu
+            displayMainMenu();
 
             choice = intRange(
                     "Enter your choice: ",
@@ -285,78 +250,26 @@ public class CoursePlanner {
                     "Error: choice must be between 1 and 16. Try again!"
             );
 
-            switch (choice) {
-                case 1:
-                    addCourse();
-                    break;
-                case 2:
-                    viewCourses();
-                    break;
-                case 3:
-                    searchCourse();
-                    break;
-                case 4:
-                    updateCourse();
-                    break;
-                case 5:
-                    removeCourse();
-                    break;
-                case 6:
-                    addStudent();
-                    break;
-                case 7:
-                    showStudents();
-                    break;
-                case 8:
-                    searchStudent();
-                    break;
-                case 9:
-                    updateStudent();
-                    break;
-                case 10:
-                    removeStudent();
-                    break;
-                case 11:
-                    enrollStudentInCourse();
-                    break;
-                case 12:
-                    showEnrolledCourses();
-                    break;
-                case 13:
-                    dropCourse();
-                    break;
-                case 14:
-                    showStudentsEnrolledInCourse();
-                    break;
-
-                case 15:
-                    reports();
-                    break;
-
-                case 16:
-                    System.out.println("Goodbye!");
-                    break;
-
-
-            }
+            processMainMenuChoice(choice);
 
         } while (choice != 16);
     }
 
-    /* Courses helper Methods*/
+    /* --------helper Methods--------------*/
 
     private String nonEmptyString(String prompt, String errorMessage) {
         while(true) {
             System.out.print(prompt);
-            String value = input.nextLine();
+            String value = input.nextLine().trim();
 
-            if (!value.trim().isEmpty()) {
+            if (!value.isEmpty()) {
                 return value;
             }
 
             System.out.println(errorMessage);
         }
     }
+
 
     private int positiveInt(String prompt, String errorMessage) {
         while(true) {
@@ -378,6 +291,7 @@ public class CoursePlanner {
         }
     }
 
+
     private int intRange(String prompt, int min, int max, String errorMessage) {
         while (true) {
             System.out.print(prompt);
@@ -398,6 +312,7 @@ public class CoursePlanner {
         }
      }
 
+
      private boolean courseExists(String code) {
         for (Course course : courses) {
             if (course.getCourseCode().equalsIgnoreCase(code)) {
@@ -406,6 +321,132 @@ public class CoursePlanner {
         }
         return false;
      }
+
+
+     private void displayMainMenu() {
+
+         printTitle("COURSE PLANNER");
+
+         printSection("COURSE MANAGEMENT");
+
+         System.out.println("1. Add Course");
+         System.out.println("2. Show Courses");
+         System.out.println("3. Search Course");
+         System.out.println("4. Update Course");
+         System.out.println("5. Remove Course");
+
+         printSection("STUDENT MANAGEMENT");
+
+         System.out.println("6. Add Student");
+         System.out.println("7. Show Students");
+         System.out.println("8. Search Students");
+         System.out.println("9. Update Student");
+         System.out.println("10. Delete Student");
+
+         printSection("ENROLLMENT MANAGEMENT");
+
+         System.out.println("11. Enroll Student in Course");
+         System.out.println("12. Show Student Enrolled Courses");
+         System.out.println("13. Drop Course");
+         System.out.println("14. Show Students Enrolled in Course");
+
+         printSection("REPORTS");
+
+         System.out.println("15. Reports");
+
+         System.out.println("\n16. Exit\n");
+     }
+
+
+     private void processMainMenuChoice(int choice) {
+
+         switch (choice) {
+             case 1:
+                 addCourse();
+                 break;
+             case 2:
+                 showCourses();
+                 break;
+             case 3:
+                 searchCourse();
+                 break;
+             case 4:
+                 updateCourse();
+                 break;
+             case 5:
+                 removeCourse();
+                 break;
+             case 6:
+                 addStudent();
+                 break;
+             case 7:
+                 showStudents();
+                 break;
+             case 8:
+                 searchStudent();
+                 break;
+             case 9:
+                 updateStudent();
+                 break;
+             case 10:
+                 removeStudent();
+                 break;
+             case 11:
+                 enrollStudentInCourse();
+                 break;
+             case 12:
+                 showEnrolledCourses();
+                 break;
+             case 13:
+                 dropCourse();
+                 break;
+             case 14:
+                 showStudentsEnrolledInCourse();
+                 break;
+
+             case 15:
+                 reports();
+                 break;
+
+             case 16:
+                 printTitle("Thank you for using Course Planner.\nGoodbye!");
+                 break;
+         }
+     }
+
+    private Course promptForCourse() {
+
+        System.out.print("Enter course code: ");
+        String code = input.nextLine();
+
+        return findCourse(code);
+    }
+
+
+    private void printLine() {
+        System.out.println("----------------------------------------------------");
+    }
+
+
+    private void printDoubleLine() {
+        System.out.println("=====================================================");
+    }
+
+
+    private void printSection(String sectionTitle) {
+        System.out.println();
+        System.out.println(sectionTitle);
+        printLine();
+    }
+
+
+    private void printTitle(String title) {
+        System.out.println();
+        printDoubleLine();
+        System.out.println(title);
+        printDoubleLine();
+        System.out.println();
+    }
 
     /*=============================STUDENT MANAGEMENT=================================*/
     //----------------addStudent method
@@ -418,6 +459,8 @@ public class CoursePlanner {
                     "Enter student ID: ",
                     "\nError: student ID cannot be empty."
             );
+
+            studentId = studentId.trim().toUpperCase();
 
             // check duplicate
             if (!studentExists(studentId)) {
@@ -503,7 +546,7 @@ public class CoursePlanner {
             return;
         }
 
-        System.out.println("\n----- Students List -----");
+        printSection("STUDENT LIST");
 
         for (int i = 0; i < students.size(); i++) {
             System.out.println((i + 1) + ". " + students.get(i));
@@ -513,27 +556,23 @@ public class CoursePlanner {
     //------------searchStudent
     public void searchStudent() {
 
-        System.out.print("Enter student ID to search: ");
-        String searchId = input.nextLine();
-
-        Student student = findStudent(searchId);
+        // get id and find student
+        Student student = promptForStudent();
 
         if (student == null) {
             System.out.println("\nStudent not found.");
             return;
         }
 
-        System.out.println("\nStudent found.");
+        printSection("STUDENT FOUND");
         System.out.println(student);
     }
 
     //------------removeStudent
     public void removeStudent() {
 
-        System.out.print("Enter studentId to remove: ");
-        String removeId = input.nextLine();
-
-        Student student = findStudent(removeId);
+        // get id and find student
+        Student student = promptForStudent();
 
         if (student == null) {
             System.out.println("\nStudent not found.");
@@ -550,17 +589,16 @@ public class CoursePlanner {
     //-------- method for updating student
     public void updateStudent() {
 
-        System.out.print("Enter the student ID to update: ");
-        String updateId = input.nextLine();
-
-        Student student = findStudent(updateId);
+        // get id and find student
+        Student student = promptForStudent();
 
         if (student == null) {
             System.out.println("\nStudent not found.");
+            return;
         }
 
             // print student
-            System.out.println("\nCurrent student:");
+            printSection("Current student:");
             System.out.println(student);
 
             // what data to update
@@ -649,11 +687,11 @@ public class CoursePlanner {
                 }
             }
 
-            System.out.println("\nUpdated student:");
+            printSection("UPDATED STUDENT:");
             System.out.println(student);
     }
 
-    /*-----Student management helper methods*/
+    /*-----helper methods---------*/
 
     private boolean studentExists(String studentId) {
 
@@ -663,6 +701,15 @@ public class CoursePlanner {
             }
         }
         return false;
+    }
+
+
+    private Student promptForStudent() {
+
+        System.out.print("Enter student ID: ");
+        String id = input.nextLine();
+
+        return findStudent(id);
     }
 
 /*======================================ENROLLMENT=====================================*/
@@ -753,8 +800,8 @@ public class CoursePlanner {
              return;
         }
 
-        // format and display enrolled courses
-        System.out.println("\nCourses enrolled by " + selectedStudent.getName() + ":");
+        // display enrolled courses
+        printSection("Courses enrolled by " + selectedStudent.getName() + ":");
 
         for (int i = 0; i < studentEnrolledCourses.size(); i++) {
             System.out.println(i + 1 + ". " + studentEnrolledCourses.get(i));
@@ -786,7 +833,7 @@ public class CoursePlanner {
         }
 
         // format and display enrolled courses
-        System.out.println("\nCourses enrolled by " + selectedStudent.getName() + ":");
+        printSection("Courses enrolled by " + selectedStudent.getName() + ":");
 
         for (int i = 0; i < studentEnrolledCourses.size(); i++) {
             System.out.println(i + 1 + ". " + studentEnrolledCourses.get(i));
@@ -843,7 +890,7 @@ public class CoursePlanner {
             return;
         }
         // otherwise
-        System.out.println("\nCourse selected:");
+        printSection("Course selected:");
         System.out.println(selectedCourse);
 
 
@@ -856,7 +903,7 @@ public class CoursePlanner {
                         .equalsIgnoreCase(selectedCourse.getCourseCode())) {
 
                     if (countStudent == 0) {
-                        System.out.println("Students enrolled in "
+                        printSection("Students enrolled in "
                                 + selectedCourse.getCourseCode()
                                 + " - "
                                 + selectedCourse.getCourseName()
@@ -883,7 +930,24 @@ public class CoursePlanner {
         }
     }
 
-    /*-----search helper methods------*/
+    /*---------helper methods------*/
+
+    private int countStudentsEnrolled(final Course course) {
+
+        int enrollmentCount = 0;
+
+        for (Student student : students) {
+            for (Course enrolledCourse : student.getEnrolledCourses()) {
+                if (enrolledCourse.getCourseCode().equalsIgnoreCase(course.getCourseCode())) {
+                    enrollmentCount++;
+                    break;
+                }
+            }
+        }
+
+        return enrollmentCount;
+    }
+
 
     private Student findStudent(String id) {
 
@@ -895,6 +959,7 @@ public class CoursePlanner {
 
         return null;
     }
+
 
     private Course findCourse(String code) {
 
@@ -917,69 +982,37 @@ public class CoursePlanner {
         int choice;
 
         do {
-            System.out.println("--- Reports Menu ---");
-            System.out.println("1. Total number of students");
-            System.out.println("2. Total number of courses");
-            System.out.println("3. Undergraduate / Graduate count");
-            System.out.println("4. Student with most enrolled course");
-            System.out.println("5. Most popular course");
-            System.out.println("6. Average courses per student");
-            System.out.println("7. Back\n");
+            // report menu
+            displayReportMenu();
 
             choice = intRange("Enter your choice: ",
                     1,
                     7,
                     "Error: choice must be between 1 and 7. Try again!");
 
-            switch (choice) {
-
-                case 1:
-                    totalStudentsReport();
-                    break;
-
-                case 2:
-                    totalCoursesReport();
-                    break;
-
-                case 3:
-                    studentTypeReport();
-                    break;
-
-                case 4:
-                    studentWithMostCoursesReport();
-                    break;
-
-                case 5:
-                    mostPopularCourseReport();
-                    break;
-
-                case 6:
-                    averageCoursesReport ();
-                    break;
-
-                case 7:
-                    System.out.println("Returning to main menu....");
-                    break;
-            }
+            // process menu choice
+            processReportMenuChoice(choice);
 
         } while (choice != 7);
     }
 
-    /*----- Reports external private methods ---------*/
+    /*----- Reports helper methods ---------*/
 
     private void totalStudentsReport() {
         // print report
-        System.out.println("\n--- Total Students Report ---");
+        printTitle("Total Students Report");
         System.out.println("Total number of students: " + students.size());
         System.out.println();
     }
 
+
     private void totalCoursesReport() {
         // print report
-        System.out.println("\n--- Total Courses Report ---");
+        printTitle("Total Courses Report");
         System.out.println("Total number of courses: " + courses.size());
         System.out.println();
     }
+
 
     private void studentTypeReport() {
 
@@ -996,11 +1029,12 @@ public class CoursePlanner {
             }
         }
         // print report
-        System.out.println("\n--- Student Type Report ---");
+        printTitle("Student Type Report");
         System.out.println("Total number of undergraduate students: " + undergraduateCount);
         System.out.println("Total number of graduate students: " + graduateCount);
         System.out.println();
     }
+
 
     private void averageCoursesReport () {
 
@@ -1018,7 +1052,7 @@ public class CoursePlanner {
         // compute and display average courses
         double averageCourses = (double) enrolledCoursesCount / students.size();
 
-        System.out.println("\n--- Average Courses Report ---");
+        printTitle("Average Courses Report");
         System.out.printf("Average courses per student: %.2f%n", averageCourses);
         System.out.println();
     }
@@ -1044,7 +1078,7 @@ public class CoursePlanner {
         }
 
         // second pass
-        int studentsWithMostCoursesCount =0;
+        int studentsWithMostCoursesCount = 0;
 
         for (int i = 0; i < students.size(); i++) {
 
@@ -1052,13 +1086,13 @@ public class CoursePlanner {
 
             if (numberOfCourses == maxEnrolledCourses) {
 
-                // print each student with maxEnrolledCourses courses
                 studentsWithMostCoursesCount++;
 
                 if (studentsWithMostCoursesCount == 1) {
-                    System.out.println("\n--- Students With Most Enrolled Courses Report ---");
+                    printTitle("Students With Most Enrolled Courses Report");
                 }
 
+                // print each student with maxEnrolledCourses courses
                 System.out.println(studentsWithMostCoursesCount
                         + ". "
                         + students.get(i).getStudentId()
@@ -1072,6 +1106,7 @@ public class CoursePlanner {
         System.out.println();
     }
 
+
     private void mostPopularCourseReport() {
         // check empty list
         if (courses.isEmpty()) {
@@ -1079,7 +1114,6 @@ public class CoursePlanner {
             return;
         }
 
-        Course mostPopularCourse = courses.get(0);
         int maxStudents = 0;
 
         // first pass
@@ -1104,7 +1138,8 @@ public class CoursePlanner {
                 courseCount++;
 
                 if (courseCount == 1) {
-                    System.out.println("\n--- Most Popular Courses Report ---");
+                    printTitle("Most Popular Courses Report");
+
                     System.out.println("Maximum enrollment: "
                             + maxStudents
                             + " student"
@@ -1125,21 +1160,62 @@ public class CoursePlanner {
         System.out.println();
     }
 
-    /*------Enrollment count helper------*/
 
-    private int countStudentsEnrolled(final Course course) {
+    private void processReportMenuChoice(int choice) {
+        switch (choice) {
 
-        int enrollmentCount = 0;
+            case 1:
+                totalStudentsReport();
+                pressEnterToContinue();
+                break;
 
-        for (Student student : students) {
-            for (Course enrolledCourse : student.getEnrolledCourses()) {
-                if (enrolledCourse.getCourseCode().equalsIgnoreCase(course.getCourseCode())) {
-                    enrollmentCount++;
-                    break;
-                }
-            }
+            case 2:
+                totalCoursesReport();
+                pressEnterToContinue();
+                break;
+
+            case 3:
+                studentTypeReport();
+                pressEnterToContinue();
+                break;
+
+            case 4:
+                studentWithMostCoursesReport();
+                pressEnterToContinue();
+                break;
+
+            case 5:
+                mostPopularCourseReport();
+                pressEnterToContinue();
+                break;
+
+            case 6:
+                averageCoursesReport ();
+                pressEnterToContinue();
+                break;
+
+            case 7:
+                System.out.println("Returning to main menu....");
+                break;
         }
+    }
 
-        return enrollmentCount;
+
+    private void displayReportMenu() {
+
+        printTitle("Reports Menu");
+        System.out.println("1. Total number of students");
+        System.out.println("2. Total number of courses");
+        System.out.println("3. Undergraduate / Graduate count");
+        System.out.println("4. Student with most enrolled course");
+        System.out.println("5. Most popular course");
+        System.out.println("6. Average courses per student");
+        System.out.println("7. Back\n");
+    }
+
+
+    private void pressEnterToContinue() {
+        System.out.println("Press Enter to continue...");
+        input.nextLine();
     }
 }
